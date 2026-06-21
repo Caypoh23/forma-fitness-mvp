@@ -139,7 +139,7 @@ export function MealPlanScreen() {
                   <div className="text-[11px] font-semibold uppercase tracking-wide text-mut">
                     {meal.type}
                   </div>
-                  <div className="mt-0.5 truncate font-display text-[15px] font-semibold text-fg">
+                  <div className="mt-0.5 line-clamp-2 font-display text-[15px] font-semibold leading-tight text-fg">
                     {meal.title}
                   </div>
                   <div className="mt-1 truncate text-[12px] text-mut nums">

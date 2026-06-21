@@ -57,7 +57,7 @@ export function WorkoutDay() {
 
                 {/* Center */}
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-display text-[15px] font-semibold leading-tight text-fg">
+                  <div className="line-clamp-2 font-display text-[15px] font-semibold leading-tight text-fg">
                     {ex.name}
                   </div>
                   <div className="mt-0.5 truncate text-[13px] text-mut">{ex.muscle}</div>

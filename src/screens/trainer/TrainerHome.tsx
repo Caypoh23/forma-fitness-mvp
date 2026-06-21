@@ -164,7 +164,7 @@ export function TrainerHome() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-[15px] font-semibold text-fg">{s.title}</div>
-                      <div className="truncate text-[12px] text-mut">{s.sub}</div>
+                      <div className="line-clamp-2 text-[12px] leading-snug text-mut">{s.sub}</div>
                     </div>
                   </div>
                 )
@@ -189,7 +189,7 @@ export function TrainerHome() {
                         <Avatar id={c.avatarId} size={44} />
                         <div className="min-w-0 flex-1">
                           <div className="truncate text-[15px] font-semibold text-fg">{c.name}</div>
-                          <div className="truncate text-[13px] text-mut">
+                          <div className="text-[13px] leading-snug text-mut">
                             не тренировал{fem ? 'ась' : 'ся'} {c.lastActive}
                           </div>
                         </div>

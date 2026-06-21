@@ -183,12 +183,13 @@ export function TrainerClientDetail() {
                         </div>
                       </div>
                       <motion.button
-                        whileTap={{ scale: 0.94 }}
+                        whileTap={{ scale: 0.9 }}
                         transition={spring}
                         onClick={() => navigate('/coach/' + fs.id)}
-                        className="shrink-0 rounded-xl bg-white/[0.07] px-3 py-2 text-[12px] font-semibold text-fg active:bg-white/10"
+                        aria-label="Комментировать разбор"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.07] text-fg active:bg-white/10"
                       >
-                        Комментировать
+                        <MessageSquare size={17} strokeWidth={2.2} />
                       </motion.button>
                     </div>
                   </Stagger.Item>

@@ -154,9 +154,6 @@ export function ClientProgram() {
                           <span className="flex shrink-0 items-center gap-1">
                             <Clock size={11} strokeWidth={2.4} /> {day.durationMin} мин
                           </span>
-                          <span className="flex shrink-0 items-center gap-1">
-                            <Flame size={11} strokeWidth={2.4} /> {day.kcal}
-                          </span>
                         </div>
                       </div>
                       <div className="flex shrink-0 items-center gap-1.5">

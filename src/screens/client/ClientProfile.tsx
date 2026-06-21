@@ -194,7 +194,7 @@ function SettingRow({
   const Inner = (
     <div className="flex w-full items-center gap-3 py-3.5 text-left">
       <IconCircle icon={icon} accent={accent} />
-      <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-fg">{title}</span>
+      <span className="min-w-0 flex-1 text-[15px] font-semibold leading-tight text-fg">{title}</span>
       {children}
     </div>
   )

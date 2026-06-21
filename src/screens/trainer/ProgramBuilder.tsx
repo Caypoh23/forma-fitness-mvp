@@ -70,7 +70,7 @@ export function ProgramBuilder() {
       <div className="-mx-5">
         <AppHeader
           back
-          title={isNew ? 'Новая программа' : 'Редактор программы'}
+          title={isNew ? 'Новая программа' : 'Программа'}
           right={
             <Button size="sm" variant="primary" icon={Save} onClick={() => navigate(-1)}>
               Сохранить

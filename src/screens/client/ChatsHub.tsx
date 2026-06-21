@@ -34,9 +34,8 @@ export function ChatsHub() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
-                    <span className="truncate font-display text-[16px] font-bold">AI-ассистент FORMA</span>
+                    <span className="truncate font-display text-[16px] font-bold">AI-ассистент</span>
                     <VerifiedBadge />
-                    <span className="shrink-0 rounded-full bg-white/[0.08] px-2 py-0.5 text-[10px] font-bold text-grad-ai">24/7</span>
                   </div>
                   <p className="mt-0.5 line-clamp-1 text-[13px] text-mut">
                     {lastAi?.text ?? 'Спроси про технику, питание или травмы'}
@@ -61,9 +60,9 @@ export function ChatsHub() {
             >
               <Avatar id={currentTrainer.avatarId} size={52} online />
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-baseline gap-1.5">
                   <span className="truncate font-display text-[16px] font-bold">{currentTrainer.name}</span>
-                  <span className="shrink-0 text-[12px] text-mut">· твой тренер</span>
+                  <span className="shrink-0 text-[11px] text-mut">тренер</span>
                 </div>
                 <p className="mt-0.5 line-clamp-1 text-[13px] text-mut">
                   {lastTrainer?.text ?? 'Силовой тренинг'}

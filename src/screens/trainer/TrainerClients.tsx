@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Search, ChevronRight, Flame, UserPlus, Target } from 'lucide-react'
+import { Search, Flame, UserPlus, Target } from 'lucide-react'
 import { Screen } from '../../components/layout/Screen'
 import { Avatar, Input, Chip, ProgressBar, Button } from '../../components/ui'
 import { Stagger, spring } from '../../components/motion'
@@ -47,9 +47,11 @@ function ClientRow({ c, onOpen }: { c: TrainerClientRow; onOpen: () => void }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="truncate font-display text-[15px] font-bold leading-tight">{c.name}</span>
-            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${badge.cls}`}>
-              {badge.label}
-            </span>
+            {isNew && (
+              <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${badge.cls}`}>
+                {badge.label}
+              </span>
+            )}
           </div>
           <div className="mt-0.5 truncate text-[12.5px] text-mut">
             {isNew ? c.goal : `${c.plan} · ${c.goal}`}
@@ -57,9 +59,11 @@ function ClientRow({ c, onOpen }: { c: TrainerClientRow; onOpen: () => void }) {
         </div>
 
         {!isNew && (
-          <div className="flex shrink-0 flex-col items-end gap-1">
+          <div className="flex shrink-0 flex-col items-end gap-1.5">
+            <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${badge.cls}`}>
+              {badge.label}
+            </span>
             <span className="text-[11px] text-mut">{c.lastActive}</span>
-            <ChevronRight size={18} className="text-white/30" strokeWidth={2.4} />
           </div>
         )}
       </div>

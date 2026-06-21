@@ -54,7 +54,7 @@ export function TrainerProfileEditor() {
             icon={Eye}
             onClick={() => navigate('/client/trainer/' + t.id)}
           >
-            Предпросмотр
+            Превью
           </Button>
         }
       />
@@ -93,7 +93,7 @@ export function TrainerProfileEditor() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="text-[15px] font-bold text-fg">Квалификация подтверждена</div>
-              <div className="truncate text-[12px] text-mut">Документы и сертификаты проверены FORMA</div>
+              <div className="text-[12px] text-mut">Сертификаты проверены FORMA</div>
             </div>
             <span className="inline-flex items-center gap-1 rounded-full bg-mint/15 px-2.5 py-1 text-[11px] font-semibold text-mint">
               <Check size={12} strokeWidth={3} /> Активен

@@ -139,18 +139,18 @@ export function TrainerFinance() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-[15px] font-semibold text-fg">{tx.title}</div>
-                        <div className="truncate text-[13px] text-mut">
+                        <div className="line-clamp-2 text-[13px] leading-snug text-mut">
                           {tx.sub} · {tx.date}
                         </div>
                       </div>
                       <div className="flex shrink-0 flex-col items-end gap-1">
                         <div
-                          className={`font-display text-[15px] font-bold nums ${
+                          className={`whitespace-nowrap font-display text-[15px] font-bold nums ${
                             positive ? 'text-mint' : 'text-fg'
                           }`}
                         >
                           {positive ? '+' : ''}
-                          {sum(tx.amount)}
+                          {tx.amount.toLocaleString('ru-RU').replace(/,/g, ' ')}
                         </div>
                         <span
                           className={`rounded-md px-2 py-0.5 text-[11px] font-semibold ${status.cls}`}
