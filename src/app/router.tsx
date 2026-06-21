@@ -29,6 +29,7 @@ import { TrainerFinance } from '../screens/trainer/TrainerFinance'
 import { TrainerInbox } from '../screens/trainer/TrainerInbox'
 import { TrainerChatDetail } from '../screens/trainer/TrainerChatDetail'
 import { TrainerProfileEditor } from '../screens/trainer/TrainerProfileEditor'
+import { TrainerAccount } from '../screens/trainer/TrainerAccount'
 
 function RootFrame() {
   return (
@@ -71,7 +72,8 @@ export function AppRouter() {
             <Route path="finance" element={<TrainerFinance />} />
             <Route path="inbox" element={<TrainerInbox />} />
             <Route path="chat/:id" element={<TrainerChatDetail />} />
-            <Route path="profile" element={<TrainerProfileEditor />} />
+            <Route path="profile" element={<TrainerAccount />} />
+            <Route path="profile/edit" element={<TrainerProfileEditor />} />
           </Route>
         </Route>
       </Routes>

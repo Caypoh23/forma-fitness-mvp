@@ -1,15 +1,16 @@
 import { useOutlet, useLocation } from 'react-router-dom'
 import { cloneElement, useEffect, useRef } from 'react'
-import { LayoutGrid, Users, ClipboardList, Wallet, MessageSquare } from 'lucide-react'
+import { CalendarCheck, Users, MessageSquare, User } from 'lucide-react'
 import { StatusBar } from '../components/layout/StatusBar'
 import { BottomNav, type NavItem } from '../components/layout/BottomNav'
 
+// 4 tabs (Everfit/Freeletics pattern). Content + Finance live inside Profile,
+// not as top-level tabs — the bar stays calm and thumb-reachable.
 const items: NavItem[] = [
-  { to: '/trainer', label: 'Главная', icon: LayoutGrid, end: true },
+  { to: '/trainer', label: 'Сегодня', icon: CalendarCheck, end: true },
   { to: '/trainer/clients', label: 'Клиенты', icon: Users },
-  { to: '/trainer/programs', label: 'Контент', icon: ClipboardList, center: true },
-  { to: '/trainer/finance', label: 'Финансы', icon: Wallet },
   { to: '/trainer/inbox', label: 'Чат', icon: MessageSquare },
+  { to: '/trainer/profile', label: 'Профиль', icon: User },
 ]
 
 export function TrainerLayout() {

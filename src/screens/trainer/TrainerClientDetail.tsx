@@ -168,11 +168,11 @@ export function TrainerClientDetail() {
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-[15px] font-semibold text-fg">{fs.exercise}</div>
                         <div className="text-[12px] text-mut">{fs.date}</div>
-                        <div className="mt-1 flex items-center gap-1.5 text-[12px]">
+                        <div className="mt-1 flex items-start gap-1.5 text-[12px]">
                           {issue ? (
                             <>
-                              <AlertTriangle size={12} strokeWidth={2.4} className="shrink-0 text-amber" />
-                              <span className="truncate text-amber">{issue}</span>
+                              <AlertTriangle size={12} strokeWidth={2.4} className="mt-0.5 shrink-0 text-amber" />
+                              <span className="leading-snug text-amber">{issue}</span>
                             </>
                           ) : (
                             <>

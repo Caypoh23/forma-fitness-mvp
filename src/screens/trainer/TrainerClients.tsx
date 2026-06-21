@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Search, Flame, UserPlus, Target } from 'lucide-react'
+import { Search, UserPlus, CalendarClock } from 'lucide-react'
 import { Screen } from '../../components/layout/Screen'
 import { Avatar, Input, Chip, ProgressBar, Button } from '../../components/ui'
 import { Stagger, spring } from '../../components/motion'
@@ -84,21 +84,11 @@ function ClientRow({ c, onOpen }: { c: TrainerClientRow; onOpen: () => void }) {
             <span className="font-semibold text-fg nums">{c.adherence}%</span>
           </div>
           <ProgressBar value={c.adherence} accent={adherenceAccent(c.adherence)} height={6} />
-          <div className="mt-2.5 flex items-center gap-3 text-[11.5px] text-mut">
-            <span className="inline-flex items-center gap-1">
-              <Target size={12} strokeWidth={2.4} className="text-iris" />
-              {c.progressPct}% прогресс
-            </span>
-            {c.streak > 0 && (
-              <span className="inline-flex items-center gap-1">
-                <Flame size={12} strokeWidth={2.4} className="text-volt" />
-                {c.streak} дней
-              </span>
-            )}
-            {c.nextSession && (
-              <span className="ml-auto truncate font-medium text-fg/80">{c.nextSession}</span>
-            )}
-          </div>
+          {c.nextSession && (
+            <div className="mt-2 flex items-center gap-1.5 text-[12px] font-medium text-volt">
+              <CalendarClock size={13} strokeWidth={2.4} /> {c.nextSession}
+            </div>
+          )}
         </div>
       )}
     </motion.div>

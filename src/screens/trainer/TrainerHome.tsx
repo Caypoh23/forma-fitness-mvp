@@ -1,50 +1,46 @@
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import {
-  Bell,
-  Users,
+  Sparkles,
+  ChevronRight,
   UserPlus,
   MessageSquare,
-  Star,
+  AlertTriangle,
   Video,
   ClipboardCheck,
-  Wallet,
-  ChevronRight,
-  TrendingUp,
-  type LucideIcon,
+  Play,
+  ArrowRight,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { Screen } from '../../components/layout/Screen'
-import { Avatar, Card, Button } from '../../components/ui'
-import { Sparkline } from '../../components/charts'
-import { Stagger, CountUp } from '../../components/motion'
-import {
-  currentTrainer,
-  trainerDashboard,
-  earnings,
-  trainerSchedule,
-  trainerClients,
-  trainerInbox,
-} from '../../data/mock'
+import { Avatar, Img, Button } from '../../components/ui'
+import { Stagger } from '../../components/motion'
+import { currentTrainer, trainerClients, trainerInbox, trainerSchedule } from '../../data/mock'
+import { img, PHOTOS } from '../../lib/images'
+import { plural } from '../../lib/format'
 
-const SCHEDULE_ICON: Record<'call' | 'review' | 'message', LucideIcon> = {
-  call: Video,
-  review: ClipboardCheck,
-  message: MessageSquare,
-}
+/* The trainer Home is a prioritized "what to do now" queue (TrueCoach / Everfit pattern):
+   AI reviews -> new requests -> clients needing attention -> unread chats -> today's calls.
+   No metrics wall — income/analytics live in the Profile tab. */
 
 export function TrainerHome() {
   const navigate = useNavigate()
 
-  const unread = trainerInbox.reduce((s, t) => s + t.unread, 0)
-  const monthDelta = Math.round(
-    ((earnings.thisMonth - earnings.lastMonth) / earnings.lastMonth) * 100,
-  )
+  const sanjar = trainerClients.find((c) => c.id === 'c1')!
+  const reviewsPending = 3
+  const newRequests = trainerClients.filter((c) => c.status === 'new')
   const attention = trainerClients.filter((c) => c.status === 'attention')
-  const requests = trainerClients.filter((c) => c.status === 'new')
+  const unread = trainerInbox.reduce((s, i) => s + i.unread, 0)
+  const calls = trainerSchedule.filter((s) => s.kind === 'call')
+
+  const taskCount =
+    (reviewsPending > 0 ? 1 : 0) + newRequests.length + attention.length + (unread > 0 ? 1 : 0)
 
   return (
     <Screen>
       {/* Greeting */}
-      <div className="flex items-center justify-between pb-5 pt-3">
+      <div className="flex items-center justify-between pb-4 pt-3">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate('/trainer/profile')}>
             <Avatar id={currentTrainer.avatarId} size={46} ring online />
@@ -56,269 +52,231 @@ export function TrainerHome() {
             </div>
           </div>
         </div>
-        <button
-          onClick={() => navigate('/trainer/inbox')}
-          className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.06] text-fg"
-        >
-          <Bell size={20} strokeWidth={2.2} />
-          {unread > 0 && (
-            <span className="absolute right-2.5 top-2.5 h-2.5 w-2.5 rounded-full bg-volt ring-2 ring-ink-950" />
-          )}
-        </button>
       </div>
 
-      <Stagger className="space-y-4">
-        {/* Earnings hero */}
-        <Stagger.Item>
-          <Card onClick={() => navigate('/trainer/finance')} className="relative p-5">
-            {/* volt glow */}
-            <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-volt/15 blur-3xl" />
-            <div className="relative flex items-start justify-between">
-              <div className="min-w-0">
-                <div className="text-[13px] font-medium text-mut">Доход за июнь</div>
-                <div className="mt-1 flex items-baseline gap-1.5">
-                  <span className="font-display text-[34px] font-extrabold leading-none tracking-tight nums text-fg">
-                    <CountUp to={earnings.thisMonth} />
-                  </span>
-                  <span className="text-base font-semibold text-mut">сум</span>
-                </div>
-                <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-mint/15 px-2 py-0.5 text-[12px] font-bold text-mint">
-                  <TrendingUp size={13} strokeWidth={2.6} />
-                  +{monthDelta}% к маю
-                </div>
-              </div>
-              <div className="w-20 shrink-0 pt-1">
-                <Sparkline data={earnings.series} color="volt" />
-              </div>
-            </div>
+      {/* One-line summary: what's on your plate */}
+      <div className="mb-4 flex items-center gap-2 rounded-2xl border border-volt/20 bg-volt/[0.07] px-4 py-3">
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-volt text-ink-950">
+          <ClipboardCheck size={16} strokeWidth={2.6} />
+        </div>
+        <p className="text-[14px] font-medium text-fg">
+          <span className="font-bold text-volt">{taskCount} {plural(taskCount, 'дело', 'дела', 'дел')}</span> на сегодня — пройдись по порядку
+        </p>
+      </div>
 
-            <div className="relative mt-4 flex items-center justify-between rounded-2xl bg-white/[0.05] px-4 py-3">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-volt/15 text-volt">
-                  <Wallet size={18} strokeWidth={2.3} />
+      <Stagger className="space-y-3">
+        {/* 1. HERO: AI technique review — the dominant action */}
+        <Stagger.Item>
+          <button
+            onClick={() => navigate('/trainer/client/' + sanjar.id)}
+            className="relative block w-full overflow-hidden rounded-3xl bg-ai-grad p-[1.5px] text-left shadow-glow-iris"
+          >
+            <div className="rounded-[calc(1.5rem-1.5px)] bg-ink-900/90 p-4 backdrop-blur">
+              <div className="mb-3 flex items-center gap-2">
+                <Sparkles size={16} className="text-grad-ai" />
+                <span className="text-[13px] font-bold text-grad-ai">AI-разбор техники готов</span>
+                <span className="ml-auto rounded-full bg-white/[0.08] px-2 py-0.5 text-[11px] font-bold text-fg nums">
+                  +{reviewsPending - 1} ещё
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl">
+                  <Img src={img(PHOTOS.training[1], { w: 240, q: 70 })} className="absolute inset-0 h-full w-full" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-volt text-ink-950">
+                      <Play size={14} className="ml-0.5 fill-ink-950" />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-[14px] font-semibold text-fg">Кошелёк</div>
-                  <div className="text-[12px] text-mut nums">
-                    Доступно {earnings.balance.toLocaleString('ru-RU').replace(/,/g, ' ')} сум
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <Avatar id={sanjar.avatarId} size={22} />
+                    <span className="truncate text-[14px] font-bold text-fg">{sanjar.name}</span>
+                  </div>
+                  <div className="mt-1 text-[13px] text-mut">прислал: Жим штанги лёжа · 4 подхода</div>
+                  <div className="mt-1.5 inline-flex items-center gap-1 rounded-lg bg-mint/15 px-2 py-0.5 text-[12px] font-bold text-mint nums">
+                    форма 89
                   </div>
                 </div>
               </div>
-              <ChevronRight size={18} className="text-white/30" />
+
+              <Button full size="lg" variant="ai" icon={Sparkles} className="mt-4" onClick={() => navigate('/trainer/client/' + sanjar.id)}>
+                Проверить технику
+              </Button>
             </div>
-          </Card>
+          </button>
         </Stagger.Item>
 
-        {/* Stats grid 2x2 */}
-        <Stagger.Item>
-          <div className="grid grid-cols-2 gap-3">
-            <StatCard
-              icon={Users}
-              value={trainerDashboard.activeClients}
-              label="Активных клиентов"
-              onClick={() => navigate('/trainer/clients')}
-            />
-            <StatCard
+        {/* 2. New client requests */}
+        {newRequests.length > 0 && (
+          <Stagger.Item>
+            <QueueGroup
               icon={UserPlus}
-              value={trainerDashboard.newRequests}
-              label="Новых запросов"
-              badge
-              onClick={() => navigate('/trainer/clients')}
-            />
-            <StatCard
-              icon={MessageSquare}
-              value={trainerDashboard.unread}
-              label="Непрочитано"
-              onClick={() => navigate('/trainer/inbox')}
-            />
-            <StatCard
-              icon={Star}
-              value={trainerDashboard.rating}
-              label="Рейтинг"
-              decimals={1}
-              accent="amber"
-              onClick={() => navigate('/trainer/profile')}
-            />
-          </div>
-        </Stagger.Item>
+              accent="iris"
+              title="Новые запросы"
+              count={newRequests.length}
+            >
+              {newRequests.map((c) => (
+                <div key={c.id} className="flex items-center gap-3 px-4 py-3">
+                  <Avatar id={c.avatarId} size={40} />
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-[14px] font-semibold text-fg">{c.name}</div>
+                    <div className="truncate text-[12px] text-mut">Цель: {c.goal}</div>
+                  </div>
+                  <Button size="sm" className="shrink-0" onClick={() => navigate('/trainer/client/' + c.id)}>
+                    Принять
+                  </Button>
+                </div>
+              ))}
+            </QueueGroup>
+          </Stagger.Item>
+        )}
 
-        {/* Today schedule */}
-        <Stagger.Item>
-          <div>
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-display text-[17px] font-bold tracking-tight text-fg">Сегодня</h2>
-              <span className="text-[13px] font-medium text-mut nums">
-                {trainerSchedule.length} событий
-              </span>
-            </div>
-            <Card className="divide-y divide-white/[0.06] p-0">
-              {trainerSchedule.map((s) => {
-                const Icon = SCHEDULE_ICON[s.kind]
+        {/* 3. Needs attention (auto-flagged) */}
+        {attention.length > 0 && (
+          <Stagger.Item>
+            <QueueGroup
+              icon={AlertTriangle}
+              accent="amber"
+              title="Требуют внимания"
+              count={attention.length}
+            >
+              {attention.map((c) => {
+                const fem = c.name.endsWith('а')
                 return (
-                  <div key={s.id} className="flex items-center gap-3 px-4 py-3.5">
-                    <div className="w-12 shrink-0 font-display text-[15px] font-bold tracking-tight nums text-fg">
-                      {s.time}
-                    </div>
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-volt">
-                      <Icon size={17} strokeWidth={2.3} />
-                    </div>
+                  <div key={c.id} className="flex items-center gap-3 px-4 py-3">
+                    <Avatar id={c.avatarId} size={40} />
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-[15px] font-semibold text-fg">{s.title}</div>
-                      <div className="line-clamp-2 text-[12px] leading-snug text-mut">{s.sub}</div>
+                      <div className="truncate text-[14px] font-semibold text-fg">{c.name}</div>
+                      <div className="text-[12px] leading-snug text-amber">
+                        не тренировал{fem ? 'ась' : 'ся'} {c.lastActive}
+                      </div>
                     </div>
+                    <Button size="sm" variant="secondary" className="shrink-0" onClick={() => navigate('/trainer/chat/' + c.id)}>
+                      Написать
+                    </Button>
                   </div>
                 )
               })}
-            </Card>
-          </div>
-        </Stagger.Item>
-
-        {/* Needs attention */}
-        {attention.length > 0 && (
-          <Stagger.Item>
-            <div>
-              <h2 className="mb-3 font-display text-[17px] font-bold tracking-tight text-fg">
-                Требуют внимания
-              </h2>
-              <div className="space-y-3">
-                {attention.map((c) => {
-                  const fem = c.name.endsWith('а')
-                  return (
-                    <Card key={c.id} className="p-4">
-                      <div className="flex items-center gap-3">
-                        <Avatar id={c.avatarId} size={44} />
-                        <div className="min-w-0 flex-1">
-                          <div className="truncate text-[15px] font-semibold text-fg">{c.name}</div>
-                          <div className="text-[13px] leading-snug text-mut">
-                            не тренировал{fem ? 'ась' : 'ся'} {c.lastActive}
-                          </div>
-                        </div>
-                        <span className="shrink-0 rounded-full bg-amber/15 px-2.5 py-1 text-[11px] font-bold text-amber nums">
-                          {c.adherence}% дисц.
-                        </span>
-                      </div>
-                      <Button
-                        full
-                        variant="secondary"
-                        size="sm"
-                        icon={MessageSquare}
-                        className="mt-3"
-                        onClick={() => navigate('/trainer/chat/' + c.id)}
-                      >
-                        Написать
-                      </Button>
-                    </Card>
-                  )
-                })}
-              </div>
-            </div>
+            </QueueGroup>
           </Stagger.Item>
         )}
 
-        {/* New requests */}
-        {requests.length > 0 && (
+        {/* 4. Unread chats */}
+        {unread > 0 && (
           <Stagger.Item>
-            <div>
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="font-display text-[17px] font-bold tracking-tight text-fg">
-                  Новые запросы
-                </h2>
-                <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-volt px-1.5 text-[12px] font-bold text-ink-950 nums">
-                  {requests.length}
-                </span>
-              </div>
-              <div className="space-y-3">
-                {requests.map((c) => (
-                  <Card key={c.id} className="p-4">
-                    <div className="flex items-center gap-3">
-                      <Avatar id={c.avatarId} size={44} />
-                      <div className="min-w-0 flex-1">
-                        <div className="truncate text-[15px] font-semibold text-fg">{c.name}</div>
-                        <div className="truncate text-[13px] text-mut">Цель: {c.goal}</div>
-                      </div>
-                    </div>
-                    <div className="mt-3 flex gap-2.5">
-                      <Button
-                        full
-                        size="sm"
-                        onClick={() => navigate('/trainer/client/' + c.id)}
-                      >
-                        Принять
-                      </Button>
-                      <Button
-                        full
-                        variant="outline"
-                        size="sm"
-                        onClick={() => navigate('/trainer/client/' + c.id)}
-                      >
-                        Профиль
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </Stagger.Item>
-        )}
-
-        {/* Quick actions */}
-        <Stagger.Item>
-          <div className="grid grid-cols-2 gap-3">
-            <Button
-              variant="secondary"
-              icon={ClipboardCheck}
-              onClick={() => navigate('/trainer/programs')}
-            >
-              Создать программу
-            </Button>
-            <Button
-              variant="secondary"
+            <TaskRow
               icon={MessageSquare}
+              accent="volt"
+              title="Ответить в чатах"
+              sub={unread + ' непрочитанных · клиенты ждут'}
               onClick={() => navigate('/trainer/inbox')}
-            >
-              Ответить в чатах
-            </Button>
-          </div>
+            />
+          </Stagger.Item>
+        )}
+
+        {/* 5. Today's calls */}
+        {calls.length > 0 && (
+          <Stagger.Item>
+            <QueueGroup icon={Video} accent="aqua" title="Созвоны сегодня" count={calls.length}>
+              {calls.map((s) => (
+                <div key={s.id} className="flex items-center gap-3 px-4 py-3">
+                  <div className="w-12 shrink-0 font-display text-[15px] font-bold tracking-tight nums text-fg">
+                    {s.time}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-[14px] font-semibold text-fg">{s.title}</div>
+                    <div className="truncate text-[12px] text-mut">{s.sub}</div>
+                  </div>
+                  <ChevronRight size={18} className="shrink-0 text-white/30" />
+                </div>
+              ))}
+            </QueueGroup>
+          </Stagger.Item>
+        )}
+
+        {/* Footer: all caught up vibe + go to clients */}
+        <Stagger.Item>
+          <button
+            onClick={() => navigate('/trainer/clients')}
+            className="flex w-full items-center justify-center gap-1.5 py-3 text-[14px] font-semibold text-mut active:text-fg"
+          >
+            Все клиенты <ArrowRight size={16} />
+          </button>
         </Stagger.Item>
       </Stagger>
     </Screen>
   )
 }
 
-function StatCard({
+/* ───────── building blocks ───────── */
+
+const ACCENTS: Record<string, { dot: string; text: string }> = {
+  volt: { dot: 'bg-volt/15 text-volt', text: 'text-volt' },
+  iris: { dot: 'bg-iris/20 text-iris', text: 'text-iris' },
+  amber: { dot: 'bg-amber/15 text-amber', text: 'text-amber' },
+  aqua: { dot: 'bg-aqua/15 text-aqua', text: 'text-aqua' },
+}
+
+function QueueGroup({
   icon: Icon,
-  value,
-  label,
-  onClick,
-  badge,
-  decimals = 0,
-  accent = 'volt',
+  accent,
+  title,
+  count,
+  children,
 }: {
   icon: LucideIcon
-  value: number
-  label: string
-  onClick?: () => void
-  badge?: boolean
-  decimals?: number
-  accent?: 'volt' | 'amber'
+  accent: keyof typeof ACCENTS
+  title: string
+  count: number
+  children: ReactNode
 }) {
-  const iconColor = accent === 'amber' ? 'text-amber' : 'text-volt'
+  const a = ACCENTS[accent]
   return (
-    <Card onClick={onClick} className="relative p-4">
-      <div className="flex items-center justify-between">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.06]">
-          <Icon size={18} strokeWidth={2.3} className={iconColor} />
+    <div className="card overflow-hidden">
+      <div className="flex items-center gap-2.5 px-4 pb-1 pt-3.5">
+        <div className={`flex h-7 w-7 items-center justify-center rounded-full ${a.dot}`}>
+          <Icon size={15} strokeWidth={2.5} />
         </div>
-        {badge && value > 0 && (
-          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-volt px-1.5 text-[11px] font-bold text-ink-950 nums">
-            {value}
-          </span>
-        )}
+        <span className="text-[14px] font-bold text-fg">{title}</span>
+        <span className={`ml-auto rounded-full bg-white/[0.07] px-2 py-0.5 text-[12px] font-bold nums ${a.text}`}>
+          {count}
+        </span>
       </div>
-      <div className="mt-3 font-display text-[26px] font-extrabold leading-none tracking-tight nums text-fg">
-        <CountUp to={value} decimals={decimals} />
+      <div className="divide-y divide-white/[0.05]">{children}</div>
+    </div>
+  )
+}
+
+function TaskRow({
+  icon: Icon,
+  accent,
+  title,
+  sub,
+  onClick,
+}: {
+  icon: LucideIcon
+  accent: keyof typeof ACCENTS
+  title: string
+  sub: string
+  onClick: () => void
+}) {
+  const a = ACCENTS[accent]
+  return (
+    <motion.button
+      whileTap={{ scale: 0.99 }}
+      onClick={onClick}
+      className="card flex w-full items-center gap-3 p-4 text-left active:bg-ink-800"
+    >
+      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${a.dot}`}>
+        <Icon size={20} strokeWidth={2.4} />
       </div>
-      <div className="mt-1 text-[12px] text-mut">{label}</div>
-    </Card>
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-[15px] font-bold text-fg">{title}</div>
+        <div className="truncate text-[13px] text-mut">{sub}</div>
+      </div>
+      <ChevronRight size={20} className="shrink-0 text-white/30" />
+    </motion.button>
   )
 }
