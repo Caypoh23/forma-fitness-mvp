@@ -236,10 +236,10 @@ export function TrainerClientDetail() {
               Видеозвонок
             </Button>
             <div className="flex gap-3">
-              <Button full variant="secondary" onClick={() => navigate('/trainer/programs')}>
-                Назначить программу
+              <Button full variant="secondary" className="min-w-0" onClick={() => navigate('/trainer/programs')}>
+                Программа
               </Button>
-              <Button full variant="outline" icon={MessageSquare} onClick={() => navigate('/trainer/chat/' + client.id)}>
+              <Button full variant="outline" className="min-w-0" icon={MessageSquare} onClick={() => navigate('/trainer/chat/' + client.id)}>
                 Сообщение
               </Button>
             </div>

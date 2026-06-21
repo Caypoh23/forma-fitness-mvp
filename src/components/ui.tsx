@@ -203,7 +203,7 @@ export function Card({
       whileTap={onClick || interactive ? { scale: 0.985 } : undefined}
       transition={spring}
       className={cn(
-        'card overflow-hidden text-left shadow-soft',
+        'card w-full overflow-hidden text-left shadow-soft',
         (onClick || interactive) && 'active:bg-ink-800',
         className,
       )}
