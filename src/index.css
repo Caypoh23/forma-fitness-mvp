@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-ink-950 text-fg font-sans antialiased;
+    margin: 0;
+    overscroll-behavior: none;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  /* tabular numbers for stats */
+  .nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+  }
+}
+
+@layer components {
+  /* The phone screen scroll area: hide scrollbar but keep scroll */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Glass surface used across cards / nav */
+  .glass {
+    background: rgba(20, 24, 29, 0.72);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  .card {
+    @apply rounded-3xl border border-white/[0.06] bg-ink-850;
+  }
+
+  .hairline {
+    @apply border-white/[0.06];
+  }
+
+  .text-grad-ai {
+    background: linear-gradient(135deg, #b9a6ff 0%, #5be3f5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-mut;
+  }
+
+  /* shimmering skeleton block */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.08),
+      transparent
+    );
+    @apply animate-shimmer;
+  }
+}
+
+/* Desktop: place the phone on a soft athletic backdrop */
+.stage-bg {
+  background:
+    radial-gradient(60% 50% at 80% 0%, rgba(124, 92, 255, 0.18), transparent 60%),
+    radial-gradient(50% 50% at 0% 100%, rgba(34, 211, 238, 0.12), transparent 55%),
+    radial-gradient(70% 60% at 50% 120%, rgba(212, 255, 62, 0.08), transparent 60%),
+    #060708;
+}
